@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -987,6 +986,8 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
+            overflow-y: auto;
+            padding: env(safe-area-inset-top, 2rem) env(safe-area-inset-right, 1rem) env(safe-area-inset-bottom, 2rem) env(safe-area-inset-left, 1rem);
         }
         .settings-modal.active {
             opacity: 1;
@@ -1148,6 +1149,113 @@
         .settings-close-btn:active {
             transform: translateY(0);
         }
+        /* 音量控制 */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+        }
+        .volume-control input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: var(--input-border);
+            outline: none;
+            border-radius: 4px;
+            transition: opacity .2s;
+        }
+        .volume-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-work);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .volume-control input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        .volume-control input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-work);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: none;
+        }
+        .volume-icon {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-primary);
+            transition: opacity 0.3s;
+        }
+        .volume-icon.low {
+            opacity: 0.3;
+        }
+        .volume-icon.high {
+            opacity: 1;
+        }
+        /* 音效选择器 */
+        .sound-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .sound-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.2rem;
+            background: var(--input-bg);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .sound-option:hover {
+            background: var(--card-bg-secondary);
+        }
+        .sound-option.active {
+            border-color: var(--accent-work);
+            background: var(--mode-badge-work);
+        }
+        .sound-name {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .sound-preview {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--accent-break);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .sound-preview:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+        .sound-preview:active {
+            transform: scale(0.95);
+        }
         /* 动画效果 */
         .pulse {
             animation: pulseAnimation 0.4s ease-in-out;
@@ -1299,121 +1407,312 @@
                 width: 22px;
                 height: 22px;
             }
-            /* 聊天式对话布局 */
             .card {
-                padding: 6rem 1.5rem 2rem 1.5rem;
-                justify-content: flex-start;
-                gap: 0.8rem;
-                overflow-y: auto;
+                padding: env(safe-area-inset-top, 1rem) env(safe-area-inset-right, 1rem) env(safe-area-inset-bottom, 1rem) env(safe-area-inset-left, 1rem);
                 height: 100%;
                 height: 100dvh;
+                overflow-y: auto;
+                overflow-x: hidden;
+                justify-content: flex-start;
+                padding-top: calc(env(safe-area-inset-top, 1rem) + 60px);
             }
-            .title {
-                margin-bottom: 0.3rem;
+            .top-buttons {
+                position: absolute;
+                top: env(safe-area-inset-top, 0.5rem);
+                left: env(safe-area-inset-left, 0.5rem);
+                right: env(safe-area-inset-right, 0.5rem);
+                z-index: 100;
             }
-            .subtitle {
-                margin-bottom: 0.8rem;
-                font-size: 1.1rem;
-            }
+            /* 模式指示器放在计时器下方，避免被顶部按钮遮挡 */
             .mode-indicator {
-                gap: 0.8rem;
+                margin-top: 0.5rem;
                 margin-bottom: 1rem;
-            }
-            .mode-badge {
-                padding: 0.6rem 1.4rem;
-                font-size: 1.2rem;
-            }
-            .task-input-container {
-                width: 100%;
-                max-width: 100%;
-                margin-bottom: 0.8rem;
-            }
-            .task-input {
-                padding: 1rem 1.4rem;
-                font-size: 1.4rem;
-            }
-            .timer-container {
-                margin-bottom: 0.5rem;
-            }
-            .boi-container {
-                margin: 0.5rem 0;
-            }
-            .btn-toggle {
-                margin-bottom: 1rem;
-                min-width: 200px;
-                padding: 1rem 3rem;
-            }
-            .action-buttons {
-                margin-bottom: 1rem;
-            }
-            .btn-action {
-                min-width: 120px;
-                padding: 1rem 0.8rem;
-            }
-            .stats-panel {
-                margin-top: 1rem;
-                padding: 1.5rem 2rem;
-                gap: 2rem;
-            }
-            .easter-egg-hint {
-                margin-top: 1.5rem;
-                font-size: 1.2rem;
-            }
-        }
-        /* 超小屏幕优化 */
-        @media screen and (max-width: 380px) and (orientation: portrait) {
-            :root {
-                --title-size: 2rem;
-                --subtitle-size: 1rem;
-                --timer-size: 3.5rem;
-                --boi-size: 15rem;
-                --btn-start-font: 1.3rem;
-                --btn-action-font: 1.1rem;
-                --stat-value-size: 1.6rem;
-                --stat-label-size: 1rem;
-            }
-            .progress-ring {
-                width: 150px;
-                height: 150px;
-            }
-            .progress-ring svg {
-                width: 150px;
-                height: 150px;
-            }
-            .card {
-                padding: 5rem 1rem 1.5rem 1rem;
+                gap: 0.6rem;
             }
             .mode-badge {
                 padding: 0.5rem 1rem;
                 font-size: 1.1rem;
+                flex: 1;
+                text-align: center;
+                min-height: 40px;
+            }
+            .mobile-palette {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+                padding: 0 0.5rem;
+            }
+            .mobile-palette .theme-switcher {
+                width: 100%;
+                justify-content: center;
+            }
+            .mobile-palette .bg-customizer {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .title {
+                margin-bottom: 0.4rem;
+            }
+            .subtitle {
+                margin-bottom: 1.5rem;
+                font-size: 1.2rem;
+            }
+            .theme-switcher {
+                margin-bottom: 1.5rem;
+                gap: 0.8rem;
+            }
+            .theme-btn {
+                width: 36px;
+                height: 36px;
+            }
+            .bg-customizer {
+                padding: 1rem 1.5rem;
+                margin-bottom: 1.5rem;
+                gap: 1rem;
+            }
+            .bg-customizer label {
+                font-size: 1.2rem;
+            }
+            .bg-color-picker {
+                width: 40px;
+                height: 40px;
+            }
+            .bg-preset {
+                width: 32px;
+                height: 32px;
+            }
+            .task-input-container {
+                margin-bottom: 1rem;
+            }
+            .task-input {
+                padding: 1rem 1.5rem;
+                font-size: 1.4rem;
+            }
+            .boi-container {
+                margin: 1rem 0;
+            }
+            .timer-label {
+                font-size: 1rem;
+                margin-top: 0.3rem;
+            }
+            .btn-toggle {
+                margin-bottom: 1rem;
+                min-width: 200px;
+                min-height: 50px;
             }
             .action-buttons {
+                margin-bottom: 1rem;
                 gap: 0.8rem;
             }
             .btn-action {
-                min-width: 100px;
-                padding: 0.8rem 0.5rem;
+                min-width: 120px;
+                padding: 1rem 1rem;
+                min-height: 48px;
             }
             .stats-panel {
-                padding: 1.2rem 1rem;
-                gap: 1.5rem;
+                margin-top: 1.5rem;
+                padding: 1.5rem 2rem;
+                gap: 2rem;
+            }
+            .easter-egg-hint {
+                font-size: 1.1rem;
+                margin-top: 1.5rem;
+                opacity: 0.6;
             }
         }
-        /* 深色模式下的移动端优化 */
+        /* 极小屏幕适配 */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            :root {
+                --title-size: 2rem;
+                --subtitle-size: 1.1rem;
+                --timer-size: 3.5rem;
+                --boi-size: 14rem;
+                --boi-size: 16rem;
+                --btn-start-padding: 0.8rem 3rem;
+                --btn-start-font: 1.3rem;
+                --btn-action-padding: 0.6rem 1.5rem;
+                --btn-action-font: 1.1rem;
+                --stat-value-size: 1.6rem;
+            }
+            .progress-ring {
+                width: 140px;
+                height: 140px;
+            }
+            .progress-ring svg {
+                width: 140px;
+                height: 140px;
+            }
+            .card {
+                flex-direction: row;
+                gap: 1rem;
+                padding: 0.5rem 1rem;
+            }
+            .stats-panel {
+                position: absolute;
+                bottom: 0.5rem;
+                gap: 1rem;
+                padding: 0.8rem 1.5rem;
+            }
+            .stats-panel .stat-label {
+                font-size: 1rem;
+            }
+        }
+        /* 超宽屏幕适配 */
+        @media screen and (min-width: 1440px) {
+            :root {
+                --title-size: 3.6rem;
+                --subtitle-size: 1.8rem;
+                --timer-size: 7rem;
+                --boi-size: 32rem;
+                --btn-start-padding: 1.8rem 7rem;
+                --btn-start-font: 2rem;
+                --btn-action-padding: 1.6rem 3.5rem;
+                --btn-action-font: 1.8rem;
+                --stat-value-size: 3rem;
+            }
+            .progress-ring {
+                width: 320px;
+                height: 320px;
+            }
+            .progress-ring svg {
+                width: 320px;
+                height: 320px;
+            }
+            .card {
+                padding: 4rem;
+            }
+        }
+        /* 操作按钮容器 - 手机端 */
         @media screen and (max-width: 767px) and (orientation: portrait) {
-            body.dark-mode .card {
-                background: transparent;
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                width: 100%;
+                max-width: 320px;
             }
-        }
-        /* iPhone X 及以上设备安全区域适配 */
-        @supports (padding-bottom: env(safe-area-inset-bottom)) {
-            @media screen and (max-width: 767px) and (orientation: portrait) {
-                .card {
-                    padding-bottom: calc(env(safe-area-inset-bottom, 2rem) + 1rem);
-                }
-                .stats-panel {
-                    margin-bottom: env(safe-area-inset-bottom, 0);
-                }
+            .btn-action {
+                width: 100%;
+                max-width: none;
+                padding: 1.2rem 1.5rem;
+                font-size: 1.5rem;
+            }
+            .btn-toggle {
+                width: 100%;
+                max-width: 320px;
+                margin-bottom: 1.5rem;
+            }
+            .stats-panel {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem 2rem;
+                width: 90%;
+            }
+            .bg-customizer {
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 1rem 1.5rem;
+                gap: 1rem;
+                width: 90%;
+                border-radius: 12px;
+            }
+            .bg-customizer label {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 0.5rem;
+            }
+            .bg-presets {
+                width: 100%;
+                justify-content: center;
+            }
+            .easter-egg-hint {
+                font-size: 1.2rem;
+                margin-top: 1.5rem;
+            }
+            .settings-content {
+                padding: 1.5rem;
+                max-width: 95%;
+                max-height: 85vh;
+                overflow-y: auto;
+            }
+            .settings-content h2 {
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
+            }
+            .settings-group {
+                margin-bottom: 1.2rem;
+            }
+            .settings-group label {
+                font-size: 1.3rem;
+                margin-bottom: 0.5rem;
+            }
+            .settings-group input[type="range"] {
+                height: 6px;
+            }
+            .settings-group input[type="range"]::-webkit-slider-thumb {
+                width: 18px;
+                height: 18px;
+            }
+            .settings-group .range-value {
+                font-size: 1.2rem;
+            }
+            .settings-toggle {
+                margin-bottom: 1rem;
+            }
+            .settings-toggle label {
+                font-size: 1.3rem;
+            }
+            .settings-close-btn {
+                padding: 1rem 2rem;
+                font-size: 1.4rem;
+                min-height: 48px;
+                margin-top: 1.2rem;
+            }
+            /* 音量控制移动端优化 */
+            .volume-control {
+                gap: 0.8rem;
+            }
+            .volume-control input[type="range"] {
+                height: 6px;
+            }
+            .volume-control input[type="range"]::-webkit-slider-thumb {
+                width: 18px;
+                height: 18px;
+            }
+            .volume-icon {
+                width: 20px;
+                height: 20px;
+            }
+            .range-value {
+                font-size: 1.2rem;
+                min-width: 50px;
+            }
+            /* 音效选择器移动端优化 */
+            .sound-selector {
+                gap: 0.6rem;
+            }
+            .sound-option {
+                padding: 0.8rem 1rem;
+            }
+            .sound-name {
+                font-size: 1.2rem;
+            }
+            .sound-preview {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+            /* 确保背景预设可点击 */
+            .bg-preset {
+                cursor: pointer;
+                pointer-events: auto;
+            }
+            /* 确保颜色选择器可点击 */
+            .bg-color-picker {
+                cursor: pointer;
+                pointer-events: auto;
             }
         }
         /* 横屏模式特殊处理 */
@@ -1432,6 +1731,47 @@
                 width: auto;
                 max-width: none;
                 padding: 0.8rem 3rem;
+            }
+        }
+        /* 超小屏幕设置面板优化 */
+        @media screen and (max-width: 360px) and (orientation: portrait) {
+            .settings-content {
+                padding: 1.2rem;
+                max-width: 98%;
+            }
+            .settings-content h2 {
+                font-size: 1.6rem;
+                margin-bottom: 1.2rem;
+            }
+            .settings-group {
+                margin-bottom: 1rem;
+            }
+            .settings-group label {
+                font-size: 1.2rem;
+            }
+            .settings-toggle {
+                margin-bottom: 0.8rem;
+            }
+            .settings-toggle label {
+                font-size: 1.2rem;
+            }
+            .settings-close-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1.3rem;
+                min-height: 44px;
+                margin-top: 1rem;
+            }
+            .sound-name {
+                font-size: 1.1rem;
+            }
+            .sound-preview {
+                width: 28px;
+                height: 28px;
+                font-size: 0.9rem;
+            }
+            .volume-icon {
+                width: 18px;
+                height: 18px;
             }
         }
     </style>
@@ -1557,7 +1897,7 @@
         <div class="action-buttons hidden" id="work-buttons">
             <button class="btn-action btn-success" id="btn-complete">
                 <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z"/></svg>
-                想明白了
+                想得通
             </button>
             <button class="btn-action btn-fail" id="btn-giveup">
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12C2 17.53 6.47 22 12 22C17.53 22 22 17.53 22 12C22 6.47 17.53 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM12 10.59L14.59 8L16 9.41L13.41 12L16 14.59L14.59 16L12 13.41L9.41 16L8 14.59L10.59 12L8 9.41L9.41 8L12 10.59Z"/></svg>
@@ -1617,6 +1957,40 @@
                     <span class="slider"></span>
                 </label>
             </div>
+            <div class="settings-group">
+                <label for="volume-input">音效音量:</label>
+                <div class="volume-control">
+                    <svg class="volume-icon low" viewBox="0 0 24 24"><path d="M3 9V15H7L12 20V4L17 9H3Z"/></svg>
+                    <input type="range" id="volume-input" min="0" max="100" value="70">
+                    <svg class="volume-icon high" viewBox="0 0 24 24"><path d="M3 9V15H7L12 20V4L17 9H3ZM16.5 12C16.5 10.23 15.48 8.71 14 7.97V16.02C15.48 15.29 16.5 13.77 16.5 12ZM14 3.23V5.29C16.89 6.15 19 8.83 19 12C19 15.17 16.89 17.84 14 18.7V20.77C18.01 19.86 21 16.28 21 12C21 7.72 18.01 4.14 14 3.23Z"/></svg>
+                </div>
+                <div class="range-value" id="volume-value">70%</div>
+            </div>
+            <div class="settings-group">
+                <label>完成音效:</label>
+                <div class="sound-selector" id="sound-selector">
+                    <div class="sound-option active" data-sound="bell">
+                        <span class="sound-name">🔔 经典叮当</span>
+                        <button class="sound-preview" data-sound="bell">▶</button>
+                    </div>
+                    <div class="sound-option" data-sound="digital">
+                        <span class="sound-name">🔘 电子提示</span>
+                        <button class="sound-preview" data-sound="digital">▶</button>
+                    </div>
+                    <div class="sound-option" data-sound="zen">
+                        <span class="sound-name">🎵 冥想钵音</span>
+                        <button class="sound-preview" data-sound="zen">▶</button>
+                    </div>
+                    <div class="sound-option" data-sound="bubble">
+                        <span class="sound-name">🫧 气泡萌音</span>
+                        <button class="sound-preview" data-sound="bubble">▶</button>
+                    </div>
+                    <div class="sound-option" data-sound="chime">
+                        <span class="sound-name">🎐 清脆风铃</span>
+                        <button class="sound-preview" data-sound="chime">▶</button>
+                    </div>
+                </div>
+            </div>
             <div class="settings-toggle">
                 <label for="notification-toggle">桌面通知:</label>
                 <label class="switch">
@@ -1630,9 +2004,12 @@
     <!-- 音效元素 -->
     <audio id="audio-start" src="https://www.soundjay.com/buttons/button-1.mp3" preload="auto"></audio>
     <audio id="audio-pause" src="https://www.soundjay.com/buttons/button-2.mp3" preload="auto"></audio>
-    <audio id="audio-complete" src="https://www.soundjay.com/misc/success-sound-effect.mp3" preload="auto"></audio>
+    <!-- 完成音效（可切换） -->
+    <audio id="audio-complete" preload="auto"></audio>
     <audio id="audio-fail" src="https://www.soundjay.com/misc/fail-buzzer-01.mp3" preload="auto"></audio>
     <audio id="audio-tick" src="https://www.soundjay.com/misc/tick-tock-1.mp3" preload="auto"></audio>
+    <!-- 音效预览 -->
+    <audio id="audio-preview" preload="auto"></audio>
     <script>
         console.log('Pomodoro script started.'); // 调试：脚本开始执行
         // 番茄钟配置
@@ -1655,8 +2032,33 @@
             isDarkMode: false,
             soundEnabled: true,
             notificationEnabled: true,
+            soundVolume: 70,
+            selectedSound: 'bell',
             currentTask: '',
             boiState: 'idle'
+        };
+        // 音效资源库
+        const SOUND_ASSETS = {
+            bell: {
+                complete: 'https://www.soundjay.com/misc/sounds/magic-chime-01.mp3',
+                preview: 'https://www.soundjay.com/buttons/sounds/button-09.mp3'
+            },
+            digital: {
+                complete: 'https://www.soundjay.com/misc/sounds/success-bell-01.mp3',
+                preview: 'https://www.soundjay.com/buttons/sounds/button-10.mp3'
+            },
+            zen: {
+                complete: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3',
+                preview: 'https://www.soundjay.com/buttons/sounds/button-11.mp3'
+            },
+            bubble: {
+                complete: 'https://www.soundjay.com/buttons/sounds/button-3.mp3',
+                preview: 'https://www.soundjay.com/buttons/sounds/button-4.mp3'
+            },
+            chime: {
+                complete: 'https://www.soundjay.com/misc/sounds/wind-chime-01.mp3',
+                preview: 'https://www.soundjay.com/buttons/sounds/button-12.mp3'
+            }
         };
         // DOM 元素
         const elements = {
@@ -1700,12 +2102,20 @@
             breakDurationValue: document.getElementById('break-duration-value'),
             soundToggle: document.getElementById('sound-toggle'),
             notificationToggle: document.getElementById('notification-toggle'),
+            volumeInput: document.getElementById('volume-input'),
+            volumeValue: document.getElementById('volume-value'),
+            volumeIconLow: document.querySelector('.volume-icon.low'),
+            volumeIconHigh: document.querySelector('.volume-icon.high'),
+            soundSelector: document.getElementById('sound-selector'),
+            soundOptions: document.querySelectorAll('.sound-option'),
+            soundPreviewBtns: document.querySelectorAll('.sound-preview'),
             taskInput: document.getElementById('task-input'),
             audioStart: document.getElementById('audio-start'),
             audioPause: document.getElementById('audio-pause'),
             audioComplete: document.getElementById('audio-complete'),
             audioFail: document.getElementById('audio-fail'),
-            audioTick: document.getElementById('audio-tick')
+            audioTick: document.getElementById('audio-tick'),
+            audioPreview: document.getElementById('audio-preview')
         };
         let timerInterval = null;
         let boiAnimationId = null;
@@ -1720,9 +2130,33 @@
         }
         function playSound(audioElement) {
             if (state.soundEnabled && audioElement) {
+                audioElement.volume = state.soundVolume / 100;
                 audioElement.currentTime = 0;
                 audioElement.play().catch(e => console.warn("Audio playback failed:", e));
             }
+        }
+        function playCompleteSound() {
+            if (state.soundEnabled) {
+                const completeAudio = elements.audioComplete;
+                completeAudio.src = SOUND_ASSETS[state.selectedSound].complete;
+                completeAudio.volume = state.soundVolume / 100;
+                completeAudio.currentTime = 0;
+                completeAudio.play().catch(e => {
+                    console.warn("Complete sound playback failed:", e);
+                    // 备用：使用默认音效
+                    completeAudio.src = 'https://www.soundjay.com/misc/success-sound-effect.mp3';
+                    completeAudio.volume = state.soundVolume / 100;
+                    completeAudio.play().catch(err => console.warn("Fallback sound failed:", err));
+                });
+            }
+        }
+        function playPreviewSound(soundId) {
+            if (!soundId || !SOUND_ASSETS[soundId]) return;
+            const previewAudio = elements.audioPreview;
+            previewAudio.src = SOUND_ASSETS[soundId].preview;
+            previewAudio.volume = state.soundVolume / 100;
+            previewAudio.currentTime = 0;
+            previewAudio.play().catch(e => console.warn("Preview sound playback failed:", e));
         }
         function sendNotification(title, body) {
             if (state.notificationEnabled && Notification.permission === 'granted') {
@@ -1785,16 +2219,17 @@
             elements.workButtons.classList.add('hidden');
             elements.breakButtons.classList.add('hidden');
             
-            // 当计时器运行时，隐藏切换按钮，根据模式显示对应按钮
+            // 当计时器运行时，根据状态显示对应按钮
             if (state.isRunning) {
                 elements.btnToggle.classList.add('hidden');
                 
-                if (state.mode === 'work' && !state.isPaused) {
-                    // 工作进行中：显示工作按钮
-                    elements.workButtons.classList.remove('hidden');
-                } else if (state.mode === 'break') {
-                    // 休息模式：显示结束休息按钮
+                // 休息模式：显示结束休息按钮（无论是否暂停）
+                if (state.mode === 'break') {
                     elements.breakButtons.classList.remove('hidden');
+                }
+                // 工作模式且未暂停：显示想得通/想不通按钮
+                else if (state.mode === 'work' && !state.isPaused) {
+                    elements.workButtons.classList.remove('hidden');
                 }
             }
         }
@@ -1977,7 +2412,7 @@
                 state.completed++;
                 state.totalTime += POMODORO_CONFIG.work;
                 updateStats();
-                playSound(elements.audioComplete);
+                playCompleteSound();
                 sendNotification('番茄钟', `🎉 工作完成！开始休息。`);
                 showPopup('🎉 工作完成！开始休息');
                 playSuccessEffect();
@@ -1991,7 +2426,7 @@
                 setBoiState('relaxed');
                 showBoiSpeech('休息一下吧~');
             } else {
-                playSound(elements.audioComplete);
+                playCompleteSound();
                 sendNotification('番茄钟', `✨ 休息结束！准备开始新的专注。`);
                 showPopup('✨ 休息结束！');
                 
@@ -2012,7 +2447,7 @@
             state.completed++;
             updateStats();
             
-            playSound(elements.audioComplete);
+            playCompleteSound();
             sendNotification('番茄钟', `💡 太棒了！任务完成，开始休息。`);
             showPopup('💡 太棒了！开始休息');
             playSuccessEffect();
@@ -2058,7 +2493,8 @@
             sendNotification('番茄钟', `🏁 准备开始新的番茄！`);
             showPopup('🏁 准备开始新的番茄');
             
-            // 立即重置到初始状态
+            // 立即重置到初始状态，并切换回工作模式
+            enterWorkMode();
             resetToInitial();
         }
         function enterWorkMode() {
@@ -2079,10 +2515,8 @@
             state.isRunning = false;
             state.isPaused = false;
             
-            // 只在需要时重置为工作模式（不覆盖已设置的模式）
-            if (state.mode !== 'break') {
-                enterWorkMode();
-            }
+            // 重置为工作模式
+            enterWorkMode();
             setBoiState('idle');
             
             elements.taskInput.value = state.currentTask;
@@ -2138,6 +2572,8 @@
                 breakDuration: POMODORO_CONFIG.break / 60,
                 soundEnabled: state.soundEnabled,
                 notificationEnabled: state.notificationEnabled,
+                soundVolume: state.soundVolume,
+                selectedSound: state.selectedSound,
                 currentTask: state.currentTask
             }));
         }
@@ -2150,6 +2586,8 @@
                 state.isDarkMode = savedState.isDarkMode === true;
                 state.soundEnabled = savedState.soundEnabled !== false;
                 state.notificationEnabled = savedState.notificationEnabled !== false;
+                state.soundVolume = savedState.soundVolume || 70;
+                state.selectedSound = savedState.selectedSound || 'bell';
                 state.currentTask = savedState.currentTask || '';
                 POMODORO_CONFIG.work = (savedState.workDuration || 25) * 60;
                 POMODORO_CONFIG.break = (savedState.breakDuration || 5) * 60;
@@ -2161,6 +2599,10 @@
                 elements.breakDurationValue.textContent = `${POMODORO_CONFIG.break / 60}分钟`;
                 elements.soundToggle.checked = state.soundEnabled;
                 elements.notificationToggle.checked = state.notificationEnabled;
+                elements.volumeInput.value = state.soundVolume;
+                elements.volumeValue.textContent = state.soundVolume + '%';
+                updateVolumeIcon(state.soundVolume);
+                updateSoundSelection(state.selectedSound);
                 elements.taskInput.value = state.currentTask;
             }
         }
@@ -2240,6 +2682,42 @@
                 setBackgroundColor(e.target.value);
             });
             
+            // 音量滑块
+            if (elements.volumeInput) {
+                elements.volumeInput.addEventListener('input', (e) => {
+                    const volume = parseInt(e.target.value);
+                    state.soundVolume = volume;
+                    elements.volumeValue.textContent = volume + '%';
+                    updateVolumeIcon(volume);
+                });
+                elements.volumeInput.addEventListener('change', () => {
+                    saveState();
+                });
+            }
+            
+            // 音效预览按钮
+            if (elements.soundPreviewBtns) {
+                elements.soundPreviewBtns.forEach(btn => {
+                    addTouchAndClickListener(btn, (e) => {
+                        e.stopPropagation();
+                        const soundId = btn.dataset.sound;
+                        playPreviewSound(soundId);
+                    });
+                });
+            }
+            
+            // 音效选择
+            if (elements.soundOptions) {
+                elements.soundOptions.forEach(option => {
+                    addTouchAndClickListener(option, () => {
+                        const soundId = option.dataset.sound;
+                        state.selectedSound = soundId;
+                        updateSoundSelection(soundId);
+                        playPreviewSound(soundId);
+                    });
+                });
+            }
+            
             updateTimerDisplay();
             updateStats();
             updateToggleButton();
@@ -2255,6 +2733,18 @@
             state.isDarkMode = !state.isDarkMode;
             document.body.classList.toggle('dark-mode', state.isDarkMode);
             saveState();
+        }
+        function updateVolumeIcon(volume) {
+            if (!elements.volumeIconLow || !elements.volumeIconHigh) return;
+            // 更新低音量图标
+            elements.volumeIconLow.style.opacity = volume > 0 ? '1' : '0.3';
+            elements.volumeIconHigh.style.opacity = volume > 50 ? '1' : '0.3';
+        }
+        function updateSoundSelection(soundId) {
+            if (!elements.soundOptions) return;
+            elements.soundOptions.forEach(option => {
+                option.classList.toggle('active', option.dataset.sound === soundId);
+            });
         }
         function switchTheme(theme) {
             console.log('switchTheme called:', theme); // 调试：切换主题
@@ -2293,6 +2783,9 @@
             POMODORO_CONFIG.break = parseInt(elements.breakDurationInput.value) * 60;
             state.soundEnabled = elements.soundToggle.checked;
             state.notificationEnabled = elements.notificationToggle.checked;
+            state.soundVolume = parseInt(elements.volumeInput.value);
+            const activeSoundOption = document.querySelector('.sound-option.active');
+            state.selectedSound = activeSoundOption ? activeSoundOption.dataset.sound : 'bell';
             
             if (!state.isRunning) {
                 if (state.mode === 'work') {
@@ -2331,4 +2824,3 @@
     </script>
 </body>
 </html>
-```
