@@ -459,6 +459,84 @@
         .progress-ring .progress.break {
             stroke: var(--accent-break);
         }
+        /* 进度环发光效果 */
+        .progress-ring .progress-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: transparent;
+            box-shadow: 
+                0 0 20px var(--accent-work),
+                0 0 40px var(--accent-work),
+                0 0 60px var(--accent-work);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .progress-ring .progress-glow.active {
+            opacity: 0.3;
+        }
+        .progress-ring .progress-glow.break {
+            box-shadow: 
+                0 0 20px var(--accent-break),
+                0 0 40px var(--accent-break),
+                0 0 60px var(--accent-break);
+        }
+        /* 计时器脉冲动画 */
+        .timer-container.running .timer-display {
+            animation: timerPulse 2s ease-in-out infinite;
+        }
+        @keyframes timerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        /* 计时器容器运行时的光晕 */
+        .timer-container.running .progress-ring {
+            animation: ringPulse 2s ease-in-out infinite;
+        }
+        @keyframes ringPulse {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(52, 199, 89, 0.3)); }
+            50% { filter: drop-shadow(0 0 15px rgba(52, 199, 89, 0.6)); }
+        }
+        .timer-container.running .progress-ring.break-mode {
+            animation: ringPulseBreak 2s ease-in-out infinite;
+        }
+        @keyframes ringPulseBreak {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(0, 122, 255, 0.3)); }
+            50% { filter: drop-shadow(0 0 15px rgba(0, 122, 255, 0.6)); }
+        }
+        /* 模式切换动画 */
+        .mode-switching .timer-display {
+            animation: modeSwitch 0.5s ease-in-out;
+        }
+        @keyframes modeSwitch {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.9); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        /* 背景模式过渡动画 */
+        body.mode-transition {
+            animation: bgTransition 0.8s ease-in-out;
+        }
+        @keyframes bgTransition {
+            0% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(20deg); }
+            100% { filter: hue-rotate(0deg); }
+        }
+        /* 完成动画 */
+        .timer-complete {
+            animation: completePulse 0.6s ease-out;
+        }
+        @keyframes completePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
         .timer-inner {
             position: absolute;
             top: 50%;
@@ -499,10 +577,23 @@
             color: var(--text-secondary);
             margin-top: 0.5rem;
         }
+        .timer-progress-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 0.3rem;
+            opacity: 0.7;
+            transition: color 0.3s ease;
+        }
+        .timer-progress-text.active {
+            opacity: 1;
+        }
         .timer-display.work-mode {
             color: var(--accent-work);
         }
         .timer-display.break-mode {
+            color: var(--accent-break);
+        }
+        .timer-container.break-mode .timer-display {
             color: var(--accent-break);
         }
         /* 思考小人 */
@@ -1851,8 +1942,9 @@
             <input type="text" class="task-input" id="task-input" placeholder="你正在思考什么？">
         </div>
         <!-- 番茄钟计时器 -->
-        <div class="timer-container">
+        <div class="timer-container" id="timer-container">
             <div class="progress-ring" id="progress-ring">
+                <div class="progress-glow" id="progress-glow"></div>
                 <svg viewBox="0 0 240 240">
                     <circle class="bg" cx="120" cy="120" r="110"></circle>
                     <circle class="progress" id="progress-circle" cx="120" cy="120" r="110"
@@ -1861,6 +1953,7 @@
                 <div class="timer-inner">
                     <div class="timer-display work-mode" id="timer-display">25:00</div>
                     <div class="timer-label" id="timer-label">专注时间</div>
+                    <div class="timer-progress-text" id="timer-progress-text">0%</div>
                 </div>
             </div>
         </div>
@@ -2064,7 +2157,11 @@
         const elements = {
             timerDisplay: document.getElementById('timer-display'),
             timerLabel: document.getElementById('timer-label'),
+            timerProgressText: document.getElementById('timer-progress-text'),
+            timerContainer: document.getElementById('timer-container'),
             progressCircle: document.getElementById('progress-circle'),
+            progressGlow: document.getElementById('progress-glow'),
+            progressRing: document.getElementById('progress-ring'),
             modeWork: document.getElementById('mode-work'),
             modeBreak: document.getElementById('mode-break'),
             thinkingBoi: document.getElementById('thinking-boi'),
@@ -2187,6 +2284,19 @@
             const circumference = 691.15;
             const offset = circumference * (1 - progress);
             elements.progressCircle.style.strokeDashoffset = offset;
+            
+            // 更新进度百分比显示
+            const progressPercent = Math.round(progress * 100);
+            elements.timerProgressText.textContent = progressPercent + '%';
+            elements.timerProgressText.classList.toggle('active', state.isRunning && !state.isPaused);
+            
+            // 更新发光效果
+            if (state.isRunning && !state.isPaused) {
+                elements.progressGlow.classList.add('active');
+                elements.progressGlow.classList.toggle('break', state.mode === 'break');
+            } else {
+                elements.progressGlow.classList.remove('active');
+            }
         }
         function updateStats() {
             elements.statCompleted.textContent = state.completed;
@@ -2231,6 +2341,14 @@
                 else if (state.mode === 'work' && !state.isPaused) {
                     elements.workButtons.classList.remove('hidden');
                 }
+            }
+            
+            // 更新计时器容器运行状态样式
+            if (state.isRunning && !state.isPaused) {
+                elements.timerContainer.classList.add('running');
+                elements.timerContainer.classList.toggle('break-mode', state.mode === 'break');
+            } else {
+                elements.timerContainer.classList.remove('running', 'break-mode');
             }
         }
         // 思考小人动画与表情管理
@@ -2408,6 +2526,10 @@
             state.isRunning = false;
             state.isPaused = false;
             
+            // 添加完成动画
+            elements.timerDisplay.classList.add('timer-complete');
+            setTimeout(() => elements.timerDisplay.classList.remove('timer-complete'), 600);
+            
             if (state.mode === 'work') {
                 state.completed++;
                 state.totalTime += POMODORO_CONFIG.work;
@@ -2417,12 +2539,11 @@
                 showPopup('🎉 工作完成！开始休息');
                 playSuccessEffect();
                 
-                // 立即进入休息模式
+                // 立即进入休息模式并自动开始计时
                 enterBreakMode();
                 state.isRunning = true;
-                state.isPaused = true; // 暂停状态，让用户决定何时开始休息
-                updateToggleButton();
-                updateActionButtons();
+                state.isPaused = false;
+                startTimer();
                 setBoiState('relaxed');
                 showBoiSpeech('休息一下吧~');
             } else {
@@ -2453,12 +2574,11 @@
             playSuccessEffect();
             setBoiState('happy');
             
-            // 立即进入休息模式并更新按钮状态
+            // 立即进入休息模式并自动开始计时
             enterBreakMode();
             state.isRunning = true;
-            state.isPaused = true; // 暂停状态，让用户决定何时开始休息
-            updateToggleButton();
-            updateActionButtons();
+            state.isPaused = false;
+            startTimer();
             setBoiState('relaxed');
             showBoiSpeech('休息一下吧~');
         }
@@ -2474,12 +2594,11 @@
             playFailEffect();
             setBoiState('confused');
             
-            // 立即进入休息模式并更新按钮状态
+            // 立即进入休息模式并自动开始计时
             enterBreakMode();
             state.isRunning = true;
-            state.isPaused = true; // 暂停状态，让用户决定何时开始休息
-            updateToggleButton();
-            updateActionButtons();
+            state.isPaused = false;
+            startTimer();
             setBoiState('relaxed');
             showBoiSpeech('休息一下吧~');
         }
@@ -2495,19 +2614,32 @@
             
             // 立即重置到初始状态，并切换回工作模式
             enterWorkMode();
-            resetToInitial();
+            setBoiState('idle');
+            updateTimerDisplay();
+            updateToggleButton();
+            updateActionButtons();
         }
         function enterWorkMode() {
             state.mode = 'work';
             state.timeLeft = POMODORO_CONFIG.work;
+            document.body.classList.add('mode-transition');
+            setTimeout(() => document.body.classList.remove('mode-transition'), 800);
             updateModeIndicator();
             updateTimerDisplay();
+            // 添加模式切换动画
+            elements.timerDisplay.classList.add('mode-switching');
+            setTimeout(() => elements.timerDisplay.classList.remove('mode-switching'), 500);
         }
         function enterBreakMode() {
             state.mode = 'break';
             state.timeLeft = POMODORO_CONFIG.break;
+            document.body.classList.add('mode-transition');
+            setTimeout(() => document.body.classList.remove('mode-transition'), 800);
             updateModeIndicator();
             updateTimerDisplay();
+            // 添加模式切换动画
+            elements.timerDisplay.classList.add('mode-switching');
+            setTimeout(() => elements.timerDisplay.classList.remove('mode-switching'), 500);
         }
         function resetToInitial() {
             console.log('resetToInitial called'); // 调试：重置到初始状态
@@ -2520,6 +2652,7 @@
             setBoiState('idle');
             
             elements.taskInput.value = state.currentTask;
+            updateTimerDisplay();
             updateToggleButton();
             updateActionButtons();
         }
